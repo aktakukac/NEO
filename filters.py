@@ -18,60 +18,6 @@ You'll edit this file in Tasks 3a and 3c.
 """
 import operator
 
-
-class UnsupportedCriterionError(NotImplementedError):
-    """A filter criterion is unsupported."""
-
-
-class AttributeFilter:
-    """A general superclass for filters on comparable attributes.
-
-    An `AttributeFilter` represents the search criteria pattern comparing some
-    attribute of a close approach (or its attached NEO) to a reference value. It
-    essentially functions as a callable predicate for whether a `CloseApproach`
-    object satisfies the encoded criterion.
-
-    It is constructed with a comparator operator and a reference value, and
-    calling the filter (with __call__) executes `get(approach) OP value` (in
-    infix notation).
-
-    Concrete subclasses can override the `get` classmethod to provide custom
-    behavior to fetch a desired attribute from the given `CloseApproach`.
-    """
-    def __init__(self, op, value):
-        """Construct a new `AttributeFilter` from an binary predicate and a reference value.
-
-        The reference value will be supplied as the second (right-hand side)
-        argument to the operator function. For example, an `AttributeFilter`
-        with `op=operator.le` and `value=10` will, when called on an approach,
-        evaluate `some_attribute <= 10`.
-
-        :param op: A 2-argument predicate comparator (such as `operator.le`).
-        :param value: The reference value to compare against.
-        """
-        self.op = op
-        self.value = value
-
-    def __call__(self, approach):
-        """Invoke `self(approach)`."""
-        return self.op(self.get(approach), self.value)
-
-    @classmethod
-    def get(cls, approach):
-        """Get an attribute of interest from a close approach.
-
-        Concrete subclasses must override this method to get an attribute of
-        interest from the supplied `CloseApproach`.
-
-        :param approach: A `CloseApproach` on which to evaluate this filter.
-        :return: The value of an attribute of interest, comparable to `self.value` via `self.op`.
-        """
-        raise UnsupportedCriterionError
-
-    def __repr__(self):
-        return f"{self.__class__.__name__}(op=operator.{self.op.__name__}, value={self.value})"
-
-
 def create_filters(
         date=None, start_date=None, end_date=None,
         distance_min=None, distance_max=None,
@@ -108,8 +54,33 @@ def create_filters(
     :param hazardous: Whether the NEO of a matching `CloseApproach` is potentially hazardous.
     :return: A collection of filters for use with `query`.
     """
-    # TODO: Decide how you will represent your filters.
-    return ()
+  
+    arguments = locals()
+
+    filters = []
+
+    if arguments['date']:
+        filters.append({'filtername':'date', 'operator': operator.eq, 'object': 'CA', 'attr': 'time', 'value': arguments['date']})
+    if arguments['start_date']:
+        filters.append({'filtername':'start_date','operator': operator.ge, 'object': 'CA', 'attr': 'time', 'value': arguments['start_date']})
+    if arguments['end_date']:
+        filters.append({'filtername':'end_date','operator': operator.le, 'object': 'CA', 'attr': 'time', 'value': arguments['end_date']})
+    if arguments['distance_min']:
+        filters.append({'filtername':'distance_min', 'operator': operator.ge, 'object': 'CA', 'attr': 'distance', 'value': arguments['distance_min']})
+    if arguments['distance_max']:
+        filters.append({'filtername':'distance_max', 'operator': operator.le, 'object': 'CA', 'attr': 'distance', 'value': arguments['distance_max']})
+    if arguments['velocity_min']:
+        filters.append({'filtername':'velocity_min', 'operator': operator.ge, 'object': 'CA', 'attr': 'velocity', 'value': arguments['velocity_min']})
+    if arguments['velocity_max']:
+        filters.append({'filtername':'velocity_max', 'operator': operator.le, 'object': 'CA', 'attr': 'velocity', 'value': arguments['velocity_max']})
+    if arguments['diameter_min']:
+        filters.append({'filtername':'diameter_min', 'operator': operator.ge, 'object': 'NEO', 'attr': 'diameter',  'value': arguments['diameter_min']})
+    if arguments['diameter_max']:
+        filters.append({'filtername':'diameter_max', 'operator': operator.le, 'object': 'NEO', 'attr': 'diameter', 'value': arguments['diameter_max']})
+    if arguments['hazardous'] is not None:  
+        filters.append({'filtername':'hazardous', 'operator': operator.eq, 'object': 'NEO', 'attr': 'hazardous', 'value': arguments['hazardous']})
+   
+    return filters
 
 
 def limit(iterator, n=None):
@@ -121,5 +92,15 @@ def limit(iterator, n=None):
     :param n: The maximum number of values to produce.
     :yield: The first (at most) `n` values from the iterator.
     """
-    # TODO: Produce at most `n` values from the given iterator.
-    return iterator
+    
+    if n == 0 or n is None:
+        for element in iterator:
+            yield element
+    else:
+        for i, element in enumerate(iterator):
+            if i < n:
+                yield element
+            else:
+                break
+
+

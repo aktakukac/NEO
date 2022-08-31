@@ -10,7 +10,6 @@ formatted as described in the project instructions, into a collection of
 The main module calls these functions with the arguments provided at the command
 line, and uses the resulting collections to build an `NEODatabase`.
 
-You'll edit this file in Task 2.
 """
 import csv
 import json
@@ -24,8 +23,37 @@ def load_neos(neo_csv_path):
     :param neo_csv_path: A path to a CSV file containing data about near-Earth objects.
     :return: A collection of `NearEarthObject`s.
     """
-    # TODO: Load NEO data from the given CSV file.
-    return ()
+    neos = []
+    counter = 0
+
+    with open(neo_csv_path) as csvfile:
+               
+        csvreader = csv.DictReader(csvfile)
+            
+        for i in csvreader:
+
+            designation = i['pdes']
+            
+            if i['pha'] == 'Y':
+                hazardous = True
+            else:
+                hazardous = False
+
+            name = i['name']
+             
+            try:
+                diameter = float(i['diameter'])
+            except:
+                diameter = None
+
+            neo = NearEarthObject(designation, hazardous, name, diameter)
+
+            neos.append(neo)
+
+
+    #print('neos loaded')
+
+    return neos
 
 
 def load_approaches(cad_json_path):
@@ -34,5 +62,41 @@ def load_approaches(cad_json_path):
     :param cad_json_path: A path to a JSON file containing data about close approaches.
     :return: A collection of `CloseApproach`es.
     """
-    # TODO: Load close approach data from the given JSON file.
-    return ()
+    approaches = []
+    counter = 0
+    with open(cad_json_path) as a:
+        
+        json_data = json.load(a)
+        
+        json_data_header = json_data['fields']
+        json_data_data = json_data['data']
+        
+        for json_row in json_data_data:
+            dict_row = dict(zip(json_data_header, json_row))
+            
+            time = dict_row['cd']
+
+            try:
+                distance = float(dict_row['dist'])
+            except:
+                distance = float('nan')
+
+
+            try:
+                velocity = float(dict_row['v_rel'])
+            except:
+                velocity = float('v_rel')
+
+            designation = dict_row['des']
+
+            neo = NearEarthObject('designation', True, 'name', '1.0')
+            
+            approach = CloseApproach(time=time, distance=distance, velocity=velocity, neo = neo, _designation = designation)
+
+            approaches.append(approach)
+
+    #print('approaches loaded')
+
+    return approaches
+
+
