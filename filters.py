@@ -1,5 +1,5 @@
-"""Provide filters for querying close approaches and limit the generated
-results.
+"""
+Provide filters querying close approaches and limit the generated results.
 
 The `create_filters` function produces a collection of objects that is used by
 the `query` method to generate a stream of `CloseApproach` objects that match
@@ -66,7 +66,6 @@ def create_filters(
     potentially hazardous.
     :return: A collection of filters for use with `query`.
     """
-
     arguments = locals()
 
     filters = []
@@ -154,7 +153,6 @@ def limit(iterator, n=None):
     :param n: The maximum number of values to produce.
     :yield: The first (at most) `n` values from the iterator.
     """
-
     if n == 0 or n is None:
         for element in iterator:
             yield element

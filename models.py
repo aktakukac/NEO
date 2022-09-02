@@ -31,8 +31,10 @@ class NearEarthObject:
     initialized to an empty collection, but eventually populated in the
     `NEODatabase` constructor.
     """
+
     def __init__(self, designation, hazardous, name=None, diameter=None):
         """Create a new `NearEarthObject`.
+
         parameters:
         designation - non-empty string for designation
         name - optional string (string or None value) for the name of the
@@ -60,7 +62,6 @@ class NearEarthObject:
     @property
     def fullname(self):
         """Return a representation of the full name of this NEO."""
-
         if self.name:
             return self.designation + " (" + self.name + ")"
         else:
@@ -68,7 +69,6 @@ class NearEarthObject:
 
     def __str__(self):
         """Return `str(self)`."""
-
         my_str = ''
         if self.hazardous:
             my_str = 'is'
@@ -78,13 +78,13 @@ class NearEarthObject:
             and {my_str} potentially hazardous"
 
     def __repr__(self):
-        """Return `repr(self)`, a computer-readable string representation of
-        this object."""
+        """Return `repr(self)`, a cr string representation of this object."""
         return f"NearEarthObject(designation={self.designation!r}, \
             name={self.name!r}, " \
                f"diameter={self.diameter:.3f}, hazardous={self.hazardous!r})"
 
     def serialize(self):
+        """Return a dict version of CA's."""
         my_dict = {
             'designation': self.designation,
             'name': self.name,
@@ -107,6 +107,7 @@ class CloseApproach:
     `NEODatabase` constructor.
 
     """
+
     def __init__(self, time, distance, velocity, neo, _designation,):
         """Create a new `CloseApproach`.
 
@@ -129,8 +130,8 @@ class CloseApproach:
 
     @property
     def time_str(self):
-        """Return a formatted representation of this `CloseApproach`'s approach
-        time.
+        """Return a formatted repr. of this `CloseApproach`'s approach time.
+
         The value in `self.time` should be a Python `datetime` object. While a
         `datetime` object has a string representation, the default
         representation includes seconds - significant figures that don't exist
@@ -144,16 +145,19 @@ class CloseApproach:
         return datetime_to_str(self.time)
 
     def __str__(self):
+        """Return `str(self)`."""
         return f"On {self.time_str}, '{self.neo.fullname}' \
             approaches Earth at a distance of {self.distance:.2f} \
                 au and a velocity of {self.velocity:.2f} km/s."
 
     def __repr__(self):
+        """Return `repr(self)`, a cr string representation of this object."""
         return f"CloseApproach(time={self.time_str!r}, \
             distance={self.distance:.2f}, " \
                f"velocity={self.velocity:.2f}, neo={self.neo!r})"
 
     def serialize(self):
+        """Return a dict version of NEO's."""
         my_dict = {
             'datetime_utc': datetime_to_str(self.time),
             'distance_au': self.distance,

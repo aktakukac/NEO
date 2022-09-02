@@ -36,6 +36,7 @@ having to wait to reload the database each time. However, it doesn't hot-reload.
 If needed, the script can load data from data files other than the default with
 `--neofile` or `--cadfile`.
 """
+
 import argparse
 import cmd
 import datetime
@@ -246,6 +247,7 @@ class NEOShell(cmd.Cmd):
     inspect and query commands, while only loading the data (which can be quite
     slow) once.
     """
+
     intro = ("Explore close approaches of near-Earth objects. "
              "Type `help` or `?` to list commands and `exit` to exit.\n")
     prompt = '(neo) '
